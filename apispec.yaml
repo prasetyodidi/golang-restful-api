@@ -19,6 +19,18 @@ components:
       properties:
         name:
           type: string
+    BaseResponse:
+      type: object
+      properties:
+        code:
+          type: number
+        status:
+          type: string
+  parameters:
+    CategoryId:
+      name: categoryId
+      in: path
+      description: Category Id
 paths:
   /categories:
     get:
@@ -31,16 +43,14 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  code:
-                    type: number
-                  status:
-                    type: string
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Category'
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Category'
     post:
       tags:
         - Category API
@@ -64,3 +74,51 @@ paths:
                     type: string
                   data:
                     $ref: '#/components/schemas/Category'
+  /categories/{categoryId}:
+    parameters:
+      - $ref: '#/components/parameters/CategoryId'
+    get:
+      summary: Get Category by Id
+      responses:
+        200:
+          description: success get category
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Category'
+    put:
+      summary: Update category by id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrUpdateCategory'
+      responses:
+        200:
+          description: Success get category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  status:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/CreateOrUpdateCategory'
+    delete:
+      summary: Delete category by id
+      responses:
+        200:
+          description: Success delete category
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
