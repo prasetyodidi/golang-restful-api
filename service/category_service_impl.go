@@ -3,11 +3,13 @@ package service
 import (
 	"context"
 	"database/sql"
-	"github.com/go-playground/validator"
+	"golang-restful-api/exception"
 	"golang-restful-api/helper"
 	"golang-restful-api/model/domain"
 	"golang-restful-api/model/web"
 	"golang-restful-api/repository"
+
+	"github.com/go-playground/validator"
 )
 
 type CategoryServiceImpl struct {
@@ -50,8 +52,10 @@ func (service *CategoryServiceImpl) Update(ctx context.Context, request web.Cate
 	defer helper.CommitOrRollback(tx)
 
 	category, err := service.CategoryRepository.FindById(ctx, tx, request.Id)
-	helper.PanicIfError(err)
-
+	if err != nil {
+		panic(exception.NewNotFoundError(err.Error()))
+	}
+	
 	category.Name = request.Name
 
 	category = service.CategoryRepository.Update(ctx, tx, category)
@@ -65,7 +69,9 @@ func (service *CategoryServiceImpl) Delete(ctx context.Context, categoryId int) 
 	defer helper.CommitOrRollback(tx)
 
 	category, err := service.CategoryRepository.FindById(ctx, tx, categoryId)
-	helper.PanicIfError(err)
+	if err != nil {
+		panic(exception.NewNotFoundError(err.Error()))
+	}
 
 	service.CategoryRepository.Delete(ctx, tx, category)
 }
@@ -76,7 +82,9 @@ func (service *CategoryServiceImpl) FindById(ctx context.Context, categoryId int
 	defer helper.CommitOrRollback(tx)
 
 	category, err := service.CategoryRepository.FindById(ctx, tx, categoryId)
-	helper.PanicIfError(err)
+	if err != nil {
+		panic(exception.NewNotFoundError(err.Error()))
+	}
 
 	return helper.ToCategoryResponse(category)
 }
