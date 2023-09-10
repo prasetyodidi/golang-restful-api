@@ -31,12 +31,20 @@ components:
       name: categoryId
       in: path
       description: Category Id
+  securitySchemes:
+    CategoryAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+      description: Authentication for category API
 paths:
   /categories:
     get:
       tags:
         - Category API
       summary: List all categories
+      security:
+        - CategoryAuth: []
       responses:
         200:
           description: List all categories
@@ -55,6 +63,8 @@ paths:
       tags:
         - Category API
       summary: Create New Category
+      security:
+        - CategoryAuth: []
       requestBody:
         content:
           application/json:
@@ -79,6 +89,8 @@ paths:
       - $ref: '#/components/parameters/CategoryId'
     get:
       summary: Get Category by Id
+      security:
+        - CategoryAuth: []
       responses:
         200:
           description: success get category
@@ -93,6 +105,8 @@ paths:
                         $ref: '#/components/schemas/Category'
     put:
       summary: Update category by id
+      security:
+        - CategoryAuth: []
       requestBody:
         content:
           application/json:
@@ -114,6 +128,8 @@ paths:
                     $ref: '#/components/schemas/CreateOrUpdateCategory'
     delete:
       summary: Delete category by id
+      security:
+        - CategoryAuth: []
       responses:
         200:
           description: Success delete category
